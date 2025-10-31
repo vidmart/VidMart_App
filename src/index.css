@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Fresh Green Theme - Natural & Vibrant */
+    --background: 0 0% 100%;
+    --foreground: 152 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 152 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 152 20% 15%;
+
+    /* Vibrant Green Primary */
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 160 84% 55%;
+
+    /* Emerald Secondary */
+    --secondary: 158 64% 52%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 120 10% 95%;
+    --muted-foreground: 152 10% 40%;
+
+    /* Lime Accent */
+    --accent: 84 81% 44%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 120 10% 90%;
+    --input: 120 10% 95%;
+    --ring: 160 84% 39%;
+
+    --radius: 1rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(158 64% 52%));
+    --gradient-gold: linear-gradient(135deg, hsl(84 81% 44%), hsl(90 100% 50%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(120 40% 98%));
+
+    /* Effects */
+    --glow-primary: 0 0 20px hsl(160 84% 39% / 0.5);
+    --glow-accent: 0 0 30px hsl(84 81% 44% / 0.4);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 152 20% 15%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 120 10% 97%;
+    --sidebar-accent-foreground: 152 20% 15%;
+    --sidebar-border: 120 10% 90%;
+    --sidebar-ring: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
