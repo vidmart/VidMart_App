@@ -23,7 +23,7 @@ This diagram illustrates the **Business-to-Consumer (B2C)** flow:
 
 ### 🏪 B2B Architecture (VidMart Delivery Verification)
 
-![B2B Architecture](<./upscalemedia-transformed%20(15).png>)
+![B2B Architecture](<./B2B.png>)
 
 #### Explanation:
 
