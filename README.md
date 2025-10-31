@@ -34,26 +34,6 @@ This diagram represents the **Business-to-Business (B2B)** verification system:
 - **Supabase** manages authentication, order data, and confirmation tracking.
 - **Users** such as Kirana Stores, Distributors, and VidMart Delivery Teams interact with the system to verify deliveries using blockchain-validated confirmations.
 
----
-
-## 🚀 Getting Started
-
-If you want to work locally using your preferred IDE:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install dependencies.
-npm i
-
-# Step 4: Start the development server.
-npm run dev
-```
-
 ## 🧠 Tech Stack
 
 This project is built using:
