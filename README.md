@@ -1,10 +1,44 @@
-**Use your preferred IDE**
+# VidMart Architecture Overview
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in VidMart.
+## System Architecture
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+The VidMart platform integrates **React.js frontend**, **Node.js/Express backend**, **Supabase**, and **Algorand blockchain** to enable secure, transparent, and verifiable order and reward management for both B2C and B2B operations.
 
-Follow these steps:
+### 🧩 B2C Architecture
+
+![B2C Architecture](./B2C.png)
+
+#### Explanation:
+
+This diagram illustrates the **Business-to-Consumer (B2C)** flow:
+
+- **Frontend (React, deployed on Vercel)** provides interfaces for customers, delivery personnel, and support staff.
+- **Backend (Node.js/Express)** handles order tracking, inventory management, and wallet operations.
+- **Supabase** manages authentication, database storage, and serverless functions.
+- **Algorand Blockchain** is used for **token minting/redemption** and secure transaction verification.
+- **Payment Gateway** handles payment status and token redemption.
+- A **Blockchain Interaction Module** bridges backend services with blockchain smart contracts for wallet updates and token rewards.
+
+---
+
+### 🏪 B2B Architecture (VidMart Delivery Verification)
+
+![B2B Architecture](<./upscalemedia-transformed%20(15).png>)
+
+#### Explanation:
+
+This diagram represents the **Business-to-Business (B2B)** verification system:
+
+- The **Application layer** includes Web (React.js), Mobile (React Native), and API (Node.js/Express).
+- The **Backend** communicates with the **Blockchain layer**, which hosts **Smart Contracts** and **Delivery Verification** logic.
+- **Supabase** manages authentication, order data, and confirmation tracking.
+- **Users** such as Kirana Stores, Distributors, and VidMart Delivery Teams interact with the system to verify deliveries using blockchain-validated confirmations.
+
+---
+
+## 🚀 Getting Started
+
+If you want to work locally using your preferred IDE:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
@@ -13,33 +47,22 @@ git clone <YOUR_GIT_URL>
 # Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Step 3: Install dependencies.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the development server.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🧠 Tech Stack
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+This project is built using:
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Vite**
+- **TypeScript**
+- **React**
+- **shadcn-ui**
+- **Tailwind CSS**
+- **Supabase (Auth, Database, Functions)**
+- **Algorand Blockchain**
+- **Node.js / Express**
