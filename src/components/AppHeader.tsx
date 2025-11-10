@@ -8,6 +8,10 @@ import {
   Minus,
   Store,
   Coins,
+  Menu,
+  X,
+  LogOut,
+  ChevronDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,11 +25,14 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export function AppHeader() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { items, itemCount, updateQuantity } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
   const handleCheckout = () => {
     if (!user) {
@@ -38,6 +45,12 @@ export function AppHeader() {
       return;
     }
     navigate("/checkout");
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("Logged out successfully");
+    navigate("/");
   };
 
   const { data: defaultAddress } = useQuery({
@@ -55,11 +68,10 @@ export function AppHeader() {
     enabled: !!user,
   });
 
-  // Hardcoded Algorand address for now
+  // Hardcoded Algorand address
   const ALGORAND_ADDRESS =
     "MMQ7IVU5UPXII7D54QW5T2R7FFBXY6K3QGGGKFR6TXPBEGZ7OJJVTMKTRQ";
 
-  // Fetch Algorand balance
   const { data: algorandBalance } = useQuery({
     queryKey: ["algorandBalance", ALGORAND_ADDRESS],
     queryFn: async () => {
@@ -79,171 +91,285 @@ export function AppHeader() {
       };
     },
     enabled: !!user,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-accent to-accent/90 backdrop-blur-lg border-b border-accent/20 shadow-md">
-      <div className="w-full px-4 py-5">
-        <div className="flex justify-between items-center">
-          {/* Left side - Logo and Address */}
-          <div className="flex-1 flex items-center gap-3">
-            {/* VIDMart Logo */}
-            <button
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                <Store className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-accent-foreground hidden sm:block">
-                VIDMart
-              </span>
-            </button>
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      {/* Main Header */}
+      <div className="px-3 md:px-6 lg:px-8 py-3 md:py-4">
+        <div className="flex justify-between items-center gap-4">
+          {/* Logo */}
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
+          >
+            <div className="w-8 md:w-9 h-8 md:h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center font-bold text-white text-lg">
+              ⚡
+            </div>
+            <span className="font-bold text-lg md:text-xl text-gray-900 hidden sm:block">
+              VIDMart
+            </span>
+          </button>
 
-            {/* Address */}
-            {user && defaultAddress ? (
-              <div className="flex flex-col ml-2">
-                <span className="text-xs text-accent-foreground/80 font-semibold">
-                  Deliver in 15 mins
-                </span>
-                <div className="flex items-center gap-1 mt-1">
-                  <MapPin className="h-4 w-4 text-accent-foreground" />
-                  <span className="text-sm text-accent-foreground font-medium truncate max-w-[200px]">
-                    {defaultAddress.address_line1}, {defaultAddress.pin_code}
-                  </span>
-                </div>
+          {/* Location (Desktop Only) */}
+          {user && defaultAddress && (
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <MapPin className="h-4 w-4 text-green-600" />
+              <div className="text-left">
+                <p className="text-xs text-gray-500">Deliver in</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  15 mins • {defaultAddress.address_line1}
+                </p>
               </div>
-            ) : null}
-          </div>
+            </div>
+          )}
 
-          {/* Right side - Coins, Cart and Auth buttons */}
-          <div className="flex gap-2 items-center">
-            {/* Coins Display (only when logged in) */}
+          {/* Right Side Actions */}
+          <div className="flex items-center gap-1 md:gap-3 ml-auto">
+            {/* Algo Balance */}
             {user && algorandBalance && (
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
                 onClick={() => navigate("/algorand-details")}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 shadow-md hover:shadow-lg transition-all"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-full font-medium text-sm transition-colors"
               >
-                <Coins className="h-5 w-5 text-white" />
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-bold leading-none text-white">
-                    {((algorandBalance?.algoBalance || 0) / 1000000).toFixed(4)}
-                  </span>
-                  <span className="text-[10px] text-blue-100 leading-none font-medium">
-                    ALGO
-                  </span>
-                </div>
-              </Button>
+                <Coins className="h-4 w-4" />
+                <span>
+                  {((algorandBalance?.algoBalance || 0) / 1000000).toFixed(2)}{" "}
+                  ALGO
+                </span>
+              </button>
             )}
 
-            {/* Cart Dropdown */}
-            <Popover>
+            {/* Cart Popover */}
+            <Popover open={cartOpen} onOpenChange={setCartOpen}>
               <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative text-accent-foreground hover:bg-accent-foreground/10"
-                >
-                  <ShoppingCart className="h-5 w-5" />
+                <button className="relative p-2 md:p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                  <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-gray-700" />
                   {itemCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-green-600 text-xs font-bold">
                       {itemCount}
                     </Badge>
                   )}
-                </Button>
+                </button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="end">
-                <div className="flex flex-col max-h-[400px]">
-                  <div className="p-4 border-b">
-                    <h3 className="font-semibold">Cart Items ({itemCount})</h3>
-                  </div>
-                  {items.length > 0 ? (
-                    <>
-                      <ScrollArea className="flex-1 max-h-[280px]">
-                        <div className="p-4 space-y-3">
-                          {items.map((item) => (
-                            <div
-                              key={item.id}
-                              className="flex gap-3 items-center"
-                            >
-                              <img
-                                src={item.image_url}
-                                alt={item.name}
-                                className="w-12 h-12 object-cover rounded"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium line-clamp-1">
-                                  {item.name}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-6 w-6"
-                                  onClick={() =>
-                                    updateQuantity(item.id, item.quantity - 1)
-                                  }
-                                >
-                                  <Minus className="h-3 w-3" />
-                                </Button>
-                                <span className="text-sm font-medium w-8 text-center">
-                                  {item.quantity}
-                                </span>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="h-6 w-6"
-                                  onClick={() =>
-                                    updateQuantity(item.id, item.quantity + 1)
-                                  }
-                                >
-                                  <Plus className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                      <div className="p-4 border-t">
-                        <Button onClick={handleCheckout} className="w-full">
-                          Checkout
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="p-8 text-center text-muted-foreground">
-                      Your cart is empty
-                    </div>
-                  )}
+              <PopoverContent
+                align="end"
+                className="w-96 p-0 max-h-96 flex flex-col"
+              >
+                {/* Cart Header */}
+                <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                  <h3 className="font-bold text-gray-900">
+                    Cart ({itemCount} {itemCount === 1 ? "item" : "items"})
+                  </h3>
+                  <button onClick={() => setCartOpen(false)}>
+                    <X className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+                  </button>
                 </div>
+
+                {/* Cart Items */}
+                {items.length > 0 ? (
+                  <>
+                    <ScrollArea className="flex-1">
+                      <div className="p-4 space-y-3">
+                        {items.map((item) => (
+                          <div
+                            key={item.id}
+                            className="flex gap-3 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                          >
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="w-12 h-12 object-cover rounded"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                                {item.name}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                ₹{Math.round(item.price)} × {item.quantity}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1 bg-white border border-gray-200 rounded px-1 py-0.5 flex-shrink-0">
+                              <button
+                                onClick={() =>
+                                  updateQuantity(item.id, item.quantity - 1)
+                                }
+                                className="p-0.5 hover:bg-gray-100 rounded"
+                              >
+                                <Minus className="h-3 w-3 text-gray-600" />
+                              </button>
+                              <span className="text-xs font-bold w-4 text-center">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  updateQuantity(item.id, item.quantity + 1)
+                                }
+                                className="p-0.5 hover:bg-gray-100 rounded"
+                              >
+                                <Plus className="h-3 w-3 text-gray-600" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+
+                    {/* Checkout Button */}
+                    <div className="p-4 border-t border-gray-200 bg-gray-50">
+                      <button
+                        onClick={() => {
+                          handleCheckout();
+                          setCartOpen(false);
+                        }}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg transition-colors"
+                      >
+                        Checkout
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-8 text-center">
+                    <ShoppingCart className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-600 text-sm">Your cart is empty</p>
+                  </div>
+                )}
               </PopoverContent>
             </Popover>
 
+            {/* User Menu or Sign In */}
             {user ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate("/profile")}
-                className="text-accent-foreground hover:bg-accent-foreground/10"
-              >
-                <User className="h-5 w-5" />
-              </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="p-2 md:p-2.5 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1">
+                    <User className="h-5 w-5 md:h-6 md:w-6 text-gray-700" />
+                    <ChevronDown className="h-3 w-3 text-gray-700 hidden md:block" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-56 p-0">
+                  <div className="space-y-2 p-4">
+                    <div className="pb-3 border-b border-gray-200">
+                      <p className="text-xs text-gray-600">Logged in as</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => navigate("/profile")}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center gap-2"
+                    >
+                      <User className="h-4 w-4" />
+                      Profile
+                    </button>
+
+                    <button
+                      onClick={() => navigate("/orders")}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center gap-2"
+                    >
+                      <Store className="h-4 w-4" />
+                      Orders
+                    </button>
+
+                    {algorandBalance && (
+                      <button
+                        onClick={() => navigate("/algorand-details")}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors flex items-center gap-2 md:hidden"
+                      >
+                        <Coins className="h-4 w-4" />
+                        Wallet
+                      </button>
+                    )}
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition-colors flex items-center gap-2 border-t border-gray-200 mt-2 pt-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             ) : (
-              <Button
+              <button
                 onClick={() => navigate("/auth")}
-                variant="ghost"
-                className="text-accent-foreground hover:bg-accent-foreground/10"
+                className="px-3 md:px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs md:text-sm font-bold rounded-lg transition-colors"
               >
                 Sign In
-              </Button>
+              </button>
             )}
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5 text-gray-700" />
+              ) : (
+                <Menu className="h-5 w-5 text-gray-700" />
+              )}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-gray-200 bg-gray-50 p-4 space-y-3">
+          {/* Location */}
+          {user && defaultAddress && (
+            <button
+              onClick={() => navigate("/")}
+              className="w-full text-left p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors flex items-start gap-2"
+            >
+              <MapPin className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs text-gray-600">Deliver in</p>
+                <p className="text-sm font-semibold text-gray-900">15 mins</p>
+                <p className="text-xs text-gray-600 truncate">
+                  {defaultAddress.address_line1}
+                </p>
+              </div>
+            </button>
+          )}
+
+          {/* Quick Links */}
+          <button
+            onClick={() => {
+              navigate("/profile");
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <p className="text-sm font-medium text-gray-900">My Profile</p>
+          </button>
+
+          <button
+            onClick={() => {
+              navigate("/orders");
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left p-3 bg-white rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <p className="text-sm font-medium text-gray-900">My Orders</p>
+          </button>
+
+          {user && (
+            <button
+              onClick={() => {
+                handleLogout();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full text-left p-3 bg-white rounded-lg hover:bg-red-50 transition-colors text-red-600 font-medium text-sm"
+            >
+              Sign Out
+            </button>
+          )}
+        </div>
+      )}
     </header>
   );
 }
